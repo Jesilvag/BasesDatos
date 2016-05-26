@@ -1,12 +1,15 @@
 CREATE TABLE Actividades
   (
-    idActividad                  INTEGER NOT NULL ,
-    num_horas                    INTEGER NOT NULL ,
-    contratos_idContrato         INTEGER NOT NULL ,
-    tipo_contrato_idTipoContrato INTEGER NOT NULL
-  ) ;
-ALTER TABLE Actividades ADD CONSTRAINT Actividades_PK PRIMARY KEY ( idActividad ) ;
-ALTER TABLE Actividades ADD CONSTRAINT ActividadesTipoContrato__UN UNIQUE ( tipo_contrato_idTipoContrato ) ;
+    idActividad          INTEGER NOT NULL ,
+    num_horas            INTEGER NOT NULL ,
+    contratos_idContrato INTEGER NOT NULL ,
+    descripcion          VARCHAR2 (30 CHAR)
+  )TABLESPACE TS_PARAMETRICAS_USV
+   STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0);
+ALTER TABLE Actividades ADD CONSTRAINT Actividades_PK PRIMARY KEY ( idActividad ) 
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE MATRICULAS
@@ -17,35 +20,64 @@ CREATE TABLE MATRICULAS
     fecha_limite DATE NOT NULL ,
     tipo         VARCHAR2 (10 CHAR) NOT NULL ,
     valor        NUMBER NOT NULL
-  ) ;
-ALTER TABLE MATRICULAS ADD CONSTRAINT MATRICULAS_PK PRIMARY KEY ( idMatricula ) ;
+  ) TABLESPACE TS_TRANSACCIONALES_USV
+  STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0);
+ALTER TABLE MATRICULAS ADD CONSTRAINT MATRICULAS_PK PRIMARY KEY ( idMatricula )
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE Prerrequisitos
   (
-    idPrerrequisito INTEGER NOT NULL ,
-    materia         INTEGER NOT NULL ,
-    semestre        INTEGER NOT NULL
-  ) ;
-ALTER TABLE Prerrequisitos ADD CONSTRAINT Prerrequisitos_PK PRIMARY KEY ( idPrerrequisito ) ;
+    materia  INTEGER NOT NULL ,
+    semestre INTEGER NOT NULL
+  )TABLESPACE TS_PARAMETRICAS_USV
+   STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0) ;
+ALTER TABLE Prerrequisitos ADD CONSTRAINT Prerrequisitos_PK PRIMARY KEY ( materia, semestre ) 
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE REGISTRO_MATERIAS
   (
     idCurso                  INTEGER NOT NULL ,
     estudiantes_idEstudiante INTEGER NOT NULL ,
-    fecha_registro           DATE NOT NULL ,
-    estado                   CHAR (1) DEFAULT '0'
-  ) ;
-ALTER TABLE REGISTRO_MATERIAS ADD CONSTRAINT REGISTRO_MATERIAS_PK PRIMARY KEY ( idCurso ) ;
+    maxCreditos              INTEGER
+  ) TABLESPACE TS_TRANSACCIONALES_USV
+  STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0);
+ALTER TABLE REGISTRO_MATERIAS ADD CONSTRAINT REGISTRO_MATERIAS_PK PRIMARY KEY ( idCurso )
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE USV
   (
     idUniversidad INTEGER NOT NULL ,
     nombre        VARCHAR2 (25 CHAR)
-  ) ;
-ALTER TABLE USV ADD CONSTRAINT USV_PK PRIMARY KEY ( idUniversidad ) ;
+  )TABLESPACE TS_PARAMETRICAS_USV
+   STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0) ;
+ALTER TABLE USV ADD CONSTRAINT USV_PK PRIMARY KEY ( idUniversidad ) 
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
+
+
+CREATE TABLE agenda_docentes
+  (
+    idAgenda       INTEGER NOT NULL ,
+    horas_clase    INTEGER NOT NULL ,
+    horas_asesoria INTEGER NOT NULL ,
+    horas_apoyo    INTEGER ,
+    idDocente      INTEGER NOT NULL
+  )TABLESPACE TS_TRANSACCIONALES_USV
+  STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0) ;
+ALTER TABLE agenda_docentes ADD CONSTRAINT agenda_docentes_PK PRIMARY KEY ( idAgenda )
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE asistencia
@@ -54,8 +86,13 @@ CREATE TABLE asistencia
     asistio                  CHAR (1) DEFAULT '1' NOT NULL ,
     sesion_clase_idSesion    INTEGER NOT NULL ,
     estudiantes_idEstudiante INTEGER NOT NULL
-  ) ;
-ALTER TABLE asistencia ADD CONSTRAINT asistencia_PK PRIMARY KEY ( idAsistencia ) ;
+  ) 
+  TABLESPACE TS_TRANSACCIONALES_USV
+  STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0);
+ALTER TABLE asistencia ADD CONSTRAINT asistencia_PK PRIMARY KEY ( idAsistencia )
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE aulas
@@ -64,18 +101,27 @@ CREATE TABLE aulas
     capacidad             INTEGER NOT NULL ,
     facultades_idFacultad INTEGER NOT NULL ,
     descripcion           VARCHAR2 (40 CHAR)
-  ) ;
-ALTER TABLE aulas ADD CONSTRAINT aulas_PK PRIMARY KEY ( idAula ) ;
+  )TABLESPACE TS_PARAMETRICAS_USV
+   STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0) ;
+ALTER TABLE aulas ADD CONSTRAINT aulas_PK PRIMARY KEY ( idAula )
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE cancelaciones
   (
-    idCancelacion             INTEGER NOT NULL ,
-    fecha_cancelacion         DATE ,
-    estudiantes_idEstudiante  INTEGER NOT NULL ,
-    registro_curso_idRegCurso INTEGER NOT NULL
-  ) ;
-ALTER TABLE cancelaciones ADD CONSTRAINT cancelaciones_PK PRIMARY KEY ( idCancelacion ) ;
+    idCancelacion            INTEGER NOT NULL ,
+    fecha_cancelacion        DATE ,
+    registro_curso_idCurso   INTEGER NOT NULL ,
+    reg_curso_regMat_idCurso INTEGER NOT NULL ,
+    estudiantes_idEstudiante INTEGER NOT NULL
+  ) TABLESPACE TS_TRANSACCIONALES_USV
+  STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0);
+ALTER TABLE cancelaciones ADD CONSTRAINT cancelaciones_PK PRIMARY KEY ( idCancelacion )
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE contratos
@@ -85,8 +131,12 @@ CREATE TABLE contratos
     num_contrato         VARCHAR2 (20 CHAR) NOT NULL ,
     tipo                 VARCHAR2 (30 CHAR) NOT NULL ,
     sueldo               NUMBER NOT NULL
-  ) ;
-ALTER TABLE contratos ADD CONSTRAINT contratos_PK PRIMARY KEY ( idContrato ) ;
+  )TABLESPACE TS_PARAMETRICAS_USV
+   STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0) ;
+ALTER TABLE contratos ADD CONSTRAINT contratos_PK PRIMARY KEY ( idContrato )
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE cursos
@@ -96,24 +146,24 @@ CREATE TABLE cursos
     docentes_docentes_ID INTEGER NOT NULL ,
     materias_idMateria   INTEGER NOT NULL ,
     anio_curso           VARCHAR2 (7 CHAR) NOT NULL
-  ) ;
-ALTER TABLE cursos ADD CONSTRAINT cursos_PK PRIMARY KEY ( idCurso ) ;
-
-
-CREATE TABLE descripcion_actividad
-  (
-    idDescripcion           INTEGER NOT NULL ,
-    Actividades_idActividad INTEGER NOT NULL
-  ) ;
-ALTER TABLE descripcion_actividad ADD CONSTRAINT descripcion_actividad_PK PRIMARY KEY ( idDescripcion ) ;
+  )TABLESPACE TS_TRANSACCIONALES_USV
+  STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0);
+ALTER TABLE cursos ADD CONSTRAINT cursos_PK PRIMARY KEY ( idCurso ) 
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE dias
   (
     idDia INTEGER NOT NULL ,
     dia   VARCHAR2 (10 CHAR) NOT NULL
-  ) ;
-ALTER TABLE dias ADD CONSTRAINT dias_PK PRIMARY KEY ( idDia ) ;
+  )TABLESPACE TS_PARAMETRICAS_USV
+   STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0) ;
+ALTER TABLE dias ADD CONSTRAINT dias_PK PRIMARY KEY ( idDia )
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE docentes
@@ -124,11 +174,16 @@ CREATE TABLE docentes
     cedula      VARCHAR2 (12 CHAR) CONSTRAINT NNC_docentes_cedula NOT NULL ,
     email       VARCHAR2 (20 CHAR) CONSTRAINT NNC_docentes_email NOT NULL ,
     telefono    VARCHAR2 (15 CHAR) CONSTRAINT NNC_docentes_telefono NOT NULL
-  ) ;
+  )   TABLESPACE TS_TRANSACCIONALES_USV
+  STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0);
 CREATE INDEX docentes__IDX ON docentes
   ( apellidos ASC
-  ) ;
-ALTER TABLE docentes ADD CONSTRAINT docentes_PK PRIMARY KEY ( docentes_ID ) ;
+  )  TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
+ALTER TABLE docentes ADD CONSTRAINT docentes_PK PRIMARY KEY ( docentes_ID )
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE elementos_Audiovisuales
@@ -136,36 +191,51 @@ CREATE TABLE elementos_Audiovisuales
     idElemento            INTEGER NOT NULL ,
     facultades_idFacultad INTEGER NOT NULL ,
     nombre_elemento       VARCHAR2 (50 CHAR) NOT NULL
-  ) ;
-ALTER TABLE elementos_Audiovisuales ADD CONSTRAINT elementos_Audiovisuales_PK PRIMARY KEY ( idElemento ) ;
+  ) TABLESPACE TS_TRANSACCIONALES_USV
+  STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0);
+ALTER TABLE elementos_Audiovisuales ADD CONSTRAINT elementos_Audiovisuales_PK PRIMARY KEY ( idElemento ) 
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE elementos_reservas
   (
-    idReserva            INTEGER NOT NULL ,
     reservas_idReserva   INTEGER NOT NULL ,
     elementos_idElemento INTEGER NOT NULL
-  ) ;
-ALTER TABLE elementos_reservas ADD CONSTRAINT elementos_reservas_PK PRIMARY KEY ( idReserva ) ;
+  )TABLESPACE TS_TRANSACCIONALES_USV
+  STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0);
+  
+ALTER TABLE elementos_reservas ADD CONSTRAINT elementos_reservas_PK PRIMARY KEY ( reservas_idReserva, elementos_idElemento )
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE estudiante_calificacion
   (
-    idCalificacion              INTEGER NOT NULL ,
+    est_curso_est_idEstudiante  INTEGER NOT NULL ,
+    est_curso_cursos_idCurso    INTEGER NOT NULL ,
     evaluaciones_idCalificacion INTEGER NOT NULL ,
-    nota                        NUMBER NOT NULL ,
-    estCurso_idEstCurso         INTEGER NOT NULL
-  ) ;
-ALTER TABLE estudiante_calificacion ADD CONSTRAINT est_calificacion_PK PRIMARY KEY ( idCalificacion ) ;
+    nota                        NUMBER NOT NULL
+  ) TABLESPACE TS_TRANSACCIONALES_USV
+  STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0);
+ALTER TABLE estudiante_calificacion ADD CONSTRAINT est_calificacion_PK PRIMARY KEY ( est_curso_est_idEstudiante, est_curso_cursos_idCurso, evaluaciones_idCalificacion )
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE estudiante_curso
   (
-    idEstudiatesCurso        INTEGER NOT NULL ,
     estudiantes_idEstudiante INTEGER NOT NULL ,
     cursos_idCurso           INTEGER NOT NULL
-  ) ;
-ALTER TABLE estudiante_curso ADD CONSTRAINT estudiante_curso_PK PRIMARY KEY ( idEstudiatesCurso ) ;
+  ) TABLESPACE TS_TRANSACCIONALES_USV
+  STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0);
+ALTER TABLE estudiante_curso ADD CONSTRAINT estudiante_curso_PK PRIMARY KEY ( estudiantes_idEstudiante, cursos_idCurso ) 
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE estudiantes
@@ -180,20 +250,26 @@ CREATE TABLE estudiantes
     correo               VARCHAR2 (50 CHAR) NOT NULL ,
     direccion            VARCHAR2 (20 CHAR) NOT NULL ,
     telefono             VARCHAR2 (25 CHAR)
-  ) ;
-ALTER TABLE estudiantes ADD CONSTRAINT estudiantes_PK PRIMARY KEY ( idEstudiante ) ;
+  ) TABLESPACE TS_TRANSACCIONALES_USV
+  STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0);
+ALTER TABLE estudiantes ADD CONSTRAINT estudiantes_PK PRIMARY KEY ( idEstudiante )
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE evaluaciones
   (
-    idCalificacion              INTEGER NOT NULL ,
-    porcentaje                  NUMBER NOT NULL ,
-    fecha_entrega               DATE NOT NULL ,
-    cursos_idCurso              INTEGER NOT NULL ,
-    evaluaciones_idCalificacion INTEGER ,
-    descripcion                 VARCHAR2 (40 CHAR)
-  ) ;
-ALTER TABLE evaluaciones ADD CONSTRAINT calificaciones_PK PRIMARY KEY ( idCalificacion ) ;
+    idCalificacion INTEGER NOT NULL ,
+    porcentaje     NUMBER NOT NULL ,
+    fecha_entrega  DATE NOT NULL ,
+    descripcion    VARCHAR2 (40 CHAR)
+  ) TABLESPACE TS_TRANSACCIONALES_USV
+  STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0);
+ALTER TABLE evaluaciones ADD CONSTRAINT calificaciones_PK PRIMARY KEY ( idCalificacion ) 
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE facultades
@@ -201,8 +277,12 @@ CREATE TABLE facultades
     idFacultad        INTEGER NOT NULL ,
     USV_idUniversidad INTEGER NOT NULL ,
     nombreFacultad    INTEGER NOT NULL
-  ) ;
-ALTER TABLE facultades ADD CONSTRAINT facultades_PK PRIMARY KEY ( idFacultad ) ;
+  ) TABLESPACE TS_PARAMETRICAS_USV
+   STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0);
+ALTER TABLE facultades ADD CONSTRAINT facultades_PK PRIMARY KEY ( idFacultad )
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE fechas_pago
@@ -212,8 +292,12 @@ CREATE TABLE fechas_pago
     matricula_creditos_idMatricula INTEGER NOT NULL ,
     fecha_limite                   DATE NOT NULL ,
     monto                          INTEGER
-  ) ;
-ALTER TABLE fechas_pago ADD CONSTRAINT fechas_pago_PK PRIMARY KEY ( idFecha ) ;
+  ) TABLESPACE TS_TRANSACCIONALES_USV
+  STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0);
+ALTER TABLE fechas_pago ADD CONSTRAINT fechas_pago_PK PRIMARY KEY ( idFecha )
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE horario_dia
@@ -221,8 +305,12 @@ CREATE TABLE horario_dia
     id                 INTEGER NOT NULL ,
     horarios_idHorario INTEGER NOT NULL ,
     dias_idDia         INTEGER NOT NULL
-  ) ;
-ALTER TABLE horario_dia ADD CONSTRAINT horario_dia_PK PRIMARY KEY ( id ) ;
+  )TABLESPACE TS_TRANSACCIONALES_USV
+  STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0) ;
+ALTER TABLE horario_dia ADD CONSTRAINT horario_dia_PK PRIMARY KEY ( id ) 
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE horarios
@@ -232,16 +320,24 @@ CREATE TABLE horarios
     aulas_idAula   INTEGER NOT NULL ,
     hora_inicio    VARCHAR2 (15 CHAR) NOT NULL ,
     hora_final     VARCHAR2 (15 CHAR) NOT NULL
-  ) ;
-ALTER TABLE horarios ADD CONSTRAINT horarios_PK PRIMARY KEY ( idHorario ) ;
+  )TABLESPACE TS_TRANSACCIONALES_USV
+  STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0) ;
+ALTER TABLE horarios ADD CONSTRAINT horarios_PK PRIMARY KEY ( idHorario )
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE mallas_curriculares
   (
     idMallla             INTEGER NOT NULL ,
     programas_idPrograma INTEGER NOT NULL
-  ) ;
-ALTER TABLE mallas_curriculares ADD CONSTRAINT mallas_curriculares_PK PRIMARY KEY ( idMallla ) ;
+  ) TABLESPACE TS_PARAMETRICAS_USV
+   STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0);
+ALTER TABLE mallas_curriculares ADD CONSTRAINT mallas_curriculares_PK PRIMARY KEY ( idMallla ) 
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE materias
@@ -251,8 +347,12 @@ CREATE TABLE materias
     intensidadHoraria    INTEGER NOT NULL ,
     creditos             INTEGER NOT NULL ,
     carta_Descriptiva    VARCHAR2 (100 CHAR)
-  ) ;
-ALTER TABLE materias ADD CONSTRAINT materias_PK PRIMARY KEY ( idMateria ) ;
+  )TABLESPACE TS_PARAMETRICAS_USV
+   STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0) ;
+ALTER TABLE materias ADD CONSTRAINT materias_PK PRIMARY KEY ( idMateria ) 
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE matricula_creditos
@@ -260,8 +360,12 @@ CREATE TABLE matricula_creditos
     idMatricula           INTEGER NOT NULL ,
     num_cuotas            INTEGER NOT NULL ,
     Matricula_IdMatricula INTEGER NOT NULL
-  ) ;
-ALTER TABLE matricula_creditos ADD CONSTRAINT matricula_creditos_PK PRIMARY KEY ( idMatricula ) ;
+  )TABLESPACE TS_TRANSACCIONALES_USV
+  STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0) ;
+ALTER TABLE matricula_creditos ADD CONSTRAINT matricula_creditos_PK PRIMARY KEY ( idMatricula )
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 ALTER TABLE matricula_creditos ADD CONSTRAINT matricula_creditos__UN UNIQUE ( Matricula_IdMatricula ) ;
 
 
@@ -270,17 +374,24 @@ CREATE TABLE programas
     idPrograma            INTEGER NOT NULL ,
     facultades_idFacultad INTEGER NOT NULL ,
     nombrePrograma        VARCHAR2 (50 CHAR) NOT NULL
-  ) ;
-ALTER TABLE programas ADD CONSTRAINT programas_PK PRIMARY KEY ( idPrograma ) ;
+  )TABLESPACE TS_PARAMETRICAS_USV
+   STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0) ;
+ALTER TABLE programas ADD CONSTRAINT programas_PK PRIMARY KEY ( idPrograma ) 
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE registro_curso
   (
-    idRegCurso      INTEGER NOT NULL ,
-    cursos_idCurso  INTEGER NOT NULL ,
-    REG_MATERIAS_ID INTEGER NOT NULL
-  ) ;
-ALTER TABLE registro_curso ADD CONSTRAINT registro_curso_PK PRIMARY KEY ( idRegCurso ) ;
+    cursos_idCurso            INTEGER NOT NULL ,
+    REGISTRO_MATERIAS_idCurso INTEGER NOT NULL
+  ) TABLESPACE TS_TRANSACCIONALES_USV
+  STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0);
+ALTER TABLE registro_curso ADD CONSTRAINT registro_curso_PK PRIMARY KEY ( cursos_idCurso, REGISTRO_MATERIAS_idCurso )
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE reservas
@@ -289,8 +400,12 @@ CREATE TABLE reservas
     fecha_reserva        DATE NOT NULL ,
     docentes_docentes_ID INTEGER NOT NULL ,
     estado               CHAR (1) DEFAULT '0' NOT NULL
-  ) ;
-ALTER TABLE reservas ADD CONSTRAINT reserva_PK PRIMARY KEY ( idReserva ) ;
+  ) TABLESPACE TS_TRANSACCIONALES_USV
+  STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0);
+ALTER TABLE reservas ADD CONSTRAINT reserva_PK PRIMARY KEY ( idReserva )
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE semestres
@@ -298,8 +413,12 @@ CREATE TABLE semestres
     idSemestre                   INTEGER NOT NULL ,
     mallas_curriculares_idMallla INTEGER NOT NULL ,
     numSemestre                  INTEGER NOT NULL
-  ) ;
-ALTER TABLE semestres ADD CONSTRAINT semestres_PK PRIMARY KEY ( idSemestre ) ;
+  )TABLESPACE TS_PARAMETRICAS_USV
+   STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0) ;
+ALTER TABLE semestres ADD CONSTRAINT semestres_PK PRIMARY KEY ( idSemestre ) 
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 CREATE TABLE sesion_clase
@@ -307,21 +426,15 @@ CREATE TABLE sesion_clase
     idSesion       INTEGER NOT NULL ,
     fecha_sesion   DATE NOT NULL ,
     cursos_idCurso INTEGER NOT NULL
-  ) ;
-ALTER TABLE sesion_clase ADD CONSTRAINT sesion_clase_PK PRIMARY KEY ( idSesion ) ;
-
-
-CREATE TABLE tipo_contrato
-  (
-    idTipoContrato INTEGER NOT NULL ,
-    Descripcion    VARCHAR2 (20 CHAR) NOT NULL
-  ) ;
-ALTER TABLE tipo_contrato ADD CONSTRAINT tipo_contrato_PK PRIMARY KEY ( idTipoContrato ) ;
+  ) TABLESPACE TS_TRANSACCIONALES_USV
+  STORAGE ( INITIAL 20K NEXT 30K MINEXTENTS 1 MAXEXTENTS 10
+PCTINCREASE 0);
+ALTER TABLE sesion_clase ADD CONSTRAINT sesion_clase_PK PRIMARY KEY ( idSesion ) 
+USING INDEX TABLESPACE TS_INDICES_USV
+STORAGE ( INITIAL 10K NEXT 10K MINEXTENTS 1 MAXEXTENTS 10 PCTINCREASE 0);
 
 
 ALTER TABLE Actividades ADD CONSTRAINT Actividades_contratos_FK FOREIGN KEY ( contratos_idContrato ) REFERENCES contratos ( idContrato ) ;
-
-ALTER TABLE Actividades ADD CONSTRAINT Actividades_tipo_contrato_FK FOREIGN KEY ( tipo_contrato_idTipoContrato ) REFERENCES tipo_contrato ( idTipoContrato ) ;
 
 ALTER TABLE MATRICULAS ADD CONSTRAINT MATRICULAS_estudiantes_FK FOREIGN KEY ( idEstudiante ) REFERENCES estudiantes ( idEstudiante ) ;
 
@@ -331,13 +444,15 @@ ALTER TABLE Prerrequisitos ADD CONSTRAINT Prerrequisitos_semestres_FKv1 FOREIGN 
 
 ALTER TABLE REGISTRO_MATERIAS ADD CONSTRAINT REG_MATERIAS_estudiantes_FK FOREIGN KEY ( estudiantes_idEstudiante ) REFERENCES estudiantes ( idEstudiante ) ;
 
+ALTER TABLE agenda_docentes ADD CONSTRAINT agenda_docentes_docentes_FK FOREIGN KEY ( idDocente ) REFERENCES docentes ( docentes_ID ) ;
+
 ALTER TABLE asistencia ADD CONSTRAINT asistencia_estudiantes_FK FOREIGN KEY ( estudiantes_idEstudiante ) REFERENCES estudiantes ( idEstudiante ) ;
 
 ALTER TABLE asistencia ADD CONSTRAINT asistencia_sesion_clase_FK FOREIGN KEY ( sesion_clase_idSesion ) REFERENCES sesion_clase ( idSesion ) ;
 
 ALTER TABLE aulas ADD CONSTRAINT aulas_facultades_FK FOREIGN KEY ( facultades_idFacultad ) REFERENCES facultades ( idFacultad ) ;
 
-ALTER TABLE cancelaciones ADD CONSTRAINT cancelacion_reg_curso_FK FOREIGN KEY ( registro_curso_idRegCurso ) REFERENCES registro_curso ( idRegCurso ) ;
+ALTER TABLE cancelaciones ADD CONSTRAINT cancelacion_reg_curso_FK FOREIGN KEY ( registro_curso_idCurso, reg_curso_regMat_idCurso ) REFERENCES registro_curso ( cursos_idCurso, REGISTRO_MATERIAS_idCurso ) ;
 
 ALTER TABLE cancelaciones ADD CONSTRAINT cancelaciones_estudiantes_FK FOREIGN KEY ( estudiantes_idEstudiante ) REFERENCES estudiantes ( idEstudiante ) ;
 
@@ -347,15 +462,13 @@ ALTER TABLE cursos ADD CONSTRAINT cursos_docentes_FK FOREIGN KEY ( docentes_doce
 
 ALTER TABLE cursos ADD CONSTRAINT cursos_materias_FK FOREIGN KEY ( materias_idMateria ) REFERENCES materias ( idMateria ) ;
 
-ALTER TABLE descripcion_actividad ADD CONSTRAINT descActividad_Actividades_FK FOREIGN KEY ( Actividades_idActividad ) REFERENCES Actividades ( idActividad ) ;
-
 ALTER TABLE elementos_reservas ADD CONSTRAINT elemReservas_elemAudioV_FK FOREIGN KEY ( elementos_idElemento ) REFERENCES elementos_Audiovisuales ( idElemento ) ;
 
 ALTER TABLE elementos_Audiovisuales ADD CONSTRAINT elem_Audio_facultades_FK FOREIGN KEY ( facultades_idFacultad ) REFERENCES facultades ( idFacultad ) ;
 
 ALTER TABLE elementos_reservas ADD CONSTRAINT elementos_reservas_reservas_FK FOREIGN KEY ( reservas_idReserva ) REFERENCES reservas ( idReserva ) ;
 
-ALTER TABLE estudiante_calificacion ADD CONSTRAINT est_cal_est_curso_FK FOREIGN KEY ( estCurso_idEstCurso ) REFERENCES estudiante_curso ( idEstudiatesCurso ) ;
+ALTER TABLE estudiante_calificacion ADD CONSTRAINT est_cal_est_curso_FK FOREIGN KEY ( est_curso_est_idEstudiante, est_curso_cursos_idCurso ) REFERENCES estudiante_curso ( estudiantes_idEstudiante, cursos_idCurso ) ;
 
 ALTER TABLE estudiante_calificacion ADD CONSTRAINT est_cal_evaluaciones_FK FOREIGN KEY ( evaluaciones_idCalificacion ) REFERENCES evaluaciones ( idCalificacion ) ;
 
@@ -364,10 +477,6 @@ ALTER TABLE estudiante_curso ADD CONSTRAINT est_curso_cursos_FK FOREIGN KEY ( cu
 ALTER TABLE estudiante_curso ADD CONSTRAINT est_curso_estudiantes_FK FOREIGN KEY ( estudiantes_idEstudiante ) REFERENCES estudiantes ( idEstudiante ) ;
 
 ALTER TABLE estudiantes ADD CONSTRAINT estudiantes_programas_FK FOREIGN KEY ( programas_idPrograma ) REFERENCES programas ( idPrograma ) ;
-
-ALTER TABLE evaluaciones ADD CONSTRAINT evaluaciones_cursos_FK FOREIGN KEY ( cursos_idCurso ) REFERENCES cursos ( idCurso ) ;
-
-ALTER TABLE evaluaciones ADD CONSTRAINT evaluaciones_evaluaciones_FK FOREIGN KEY ( evaluaciones_idCalificacion ) REFERENCES evaluaciones ( idCalificacion ) ;
 
 ALTER TABLE facultades ADD CONSTRAINT facultades_USV_FK FOREIGN KEY ( USV_idUniversidad ) REFERENCES USV ( idUniversidad ) ;
 
@@ -393,7 +502,7 @@ ALTER TABLE programas ADD CONSTRAINT programas_facultades_FK FOREIGN KEY ( facul
 
 ALTER TABLE registro_curso ADD CONSTRAINT registro_curso_cursos_FK FOREIGN KEY ( cursos_idCurso ) REFERENCES cursos ( idCurso ) ;
 
-ALTER TABLE registro_curso ADD CONSTRAINT registro_curso_regMat_FK FOREIGN KEY ( REG_MATERIAS_ID ) REFERENCES REGISTRO_MATERIAS ( idCurso ) ;
+ALTER TABLE registro_curso ADD CONSTRAINT registro_curso_regMat_FK FOREIGN KEY ( REGISTRO_MATERIAS_idCurso ) REFERENCES REGISTRO_MATERIAS ( idCurso ) ;
 
 ALTER TABLE reservas ADD CONSTRAINT reservas_docentes_FK FOREIGN KEY ( docentes_docentes_ID ) REFERENCES docentes ( docentes_ID ) ;
 
@@ -424,12 +533,6 @@ CREATE OR REPLACE TRIGGER MATRICULAS_idMatricula_TRG BEFORE
 END;
 /
 
-CREATE SEQUENCE Prerrequisitos_idPrerrequisito START WITH 1 NOCACHE ORDER ;
-CREATE OR REPLACE TRIGGER Prerrequisitos_idPrerrequisito BEFORE
-  INSERT ON Prerrequisitos FOR EACH ROW WHEN (NEW.idPrerrequisito IS NULL) BEGIN :NEW.idPrerrequisito := Prerrequisitos_idPrerrequisito.NEXTVAL;
-END;
-/
-
 CREATE SEQUENCE REGISTRO_MATERIAS_idCurso_SEQ START WITH 1 NOCACHE ORDER ;
 CREATE OR REPLACE TRIGGER REGISTRO_MATERIAS_idCurso_TRG BEFORE
   INSERT ON REGISTRO_MATERIAS FOR EACH ROW WHEN (NEW.idCurso IS NULL) BEGIN :NEW.idCurso := REGISTRO_MATERIAS_idCurso_SEQ.NEXTVAL;
@@ -439,6 +542,12 @@ END;
 CREATE SEQUENCE USV_idUniversidad_SEQ START WITH 1 NOCACHE ORDER ;
 CREATE OR REPLACE TRIGGER USV_idUniversidad_TRG BEFORE
   INSERT ON USV FOR EACH ROW WHEN (NEW.idUniversidad IS NULL) BEGIN :NEW.idUniversidad := USV_idUniversidad_SEQ.NEXTVAL;
+END;
+/
+
+CREATE SEQUENCE agenda_docentes_idAgenda_SEQ START WITH 1 NOCACHE ORDER ;
+CREATE OR REPLACE TRIGGER agenda_docentes_idAgenda_TRG BEFORE
+  INSERT ON agenda_docentes FOR EACH ROW WHEN (NEW.idAgenda IS NULL) BEGIN :NEW.idAgenda := agenda_docentes_idAgenda_SEQ.NEXTVAL;
 END;
 /
 
@@ -472,12 +581,6 @@ CREATE OR REPLACE TRIGGER cursos_idCurso_TRG BEFORE
 END;
 /
 
-CREATE SEQUENCE descripcion_actividad_idDescri START WITH 1 NOCACHE ORDER ;
-CREATE OR REPLACE TRIGGER descripcion_actividad_idDescri BEFORE
-  INSERT ON descripcion_actividad FOR EACH ROW WHEN (NEW.idDescripcion IS NULL) BEGIN :NEW.idDescripcion := descripcion_actividad_idDescri.NEXTVAL;
-END;
-/
-
 CREATE SEQUENCE dias_idDia_SEQ START WITH 1 NOCACHE ORDER ;
 CREATE OR REPLACE TRIGGER dias_idDia_TRG BEFORE
   INSERT ON dias FOR EACH ROW WHEN (NEW.idDia IS NULL) BEGIN :NEW.idDia := dias_idDia_SEQ.NEXTVAL;
@@ -496,33 +599,9 @@ CREATE OR REPLACE TRIGGER elementos_Audiovisuales_idElem BEFORE
 END;
 /
 
-CREATE SEQUENCE elementos_reservas_idReserva START WITH 1 NOCACHE ORDER ;
-CREATE OR REPLACE TRIGGER elementos_reservas_idReserva BEFORE
-  INSERT ON elementos_reservas FOR EACH ROW WHEN (NEW.idReserva IS NULL) BEGIN :NEW.idReserva := elementos_reservas_idReserva.NEXTVAL;
-END;
-/
-
-CREATE SEQUENCE estudiante_calificacion_idCali START WITH 1 NOCACHE ORDER ;
-CREATE OR REPLACE TRIGGER estudiante_calificacion_idCali BEFORE
-  INSERT ON estudiante_calificacion FOR EACH ROW WHEN (NEW.idCalificacion IS NULL) BEGIN :NEW.idCalificacion := estudiante_calificacion_idCali.NEXTVAL;
-END;
-/
-
-CREATE SEQUENCE estudiante_curso_idEstudiatesC START WITH 1 NOCACHE ORDER ;
-CREATE OR REPLACE TRIGGER estudiante_curso_idEstudiatesC BEFORE
-  INSERT ON estudiante_curso FOR EACH ROW WHEN (NEW.idEstudiatesCurso IS NULL) BEGIN :NEW.idEstudiatesCurso := estudiante_curso_idEstudiatesC.NEXTVAL;
-END;
-/
-
 CREATE SEQUENCE estudiantes_idEstudiante_SEQ START WITH 1 NOCACHE ORDER ;
 CREATE OR REPLACE TRIGGER estudiantes_idEstudiante_TRG BEFORE
   INSERT ON estudiantes FOR EACH ROW WHEN (NEW.idEstudiante IS NULL) BEGIN :NEW.idEstudiante := estudiantes_idEstudiante_SEQ.NEXTVAL;
-END;
-/
-
-CREATE SEQUENCE evaluaciones_idCalificacion START WITH 1 NOCACHE ORDER ;
-CREATE OR REPLACE TRIGGER evaluaciones_idCalificacion BEFORE
-  INSERT ON evaluaciones FOR EACH ROW WHEN (NEW.idCalificacion IS NULL) BEGIN :NEW.idCalificacion := evaluaciones_idCalificacion.NEXTVAL;
 END;
 /
 
@@ -574,12 +653,6 @@ CREATE OR REPLACE TRIGGER programas_idPrograma_TRG BEFORE
 END;
 /
 
-CREATE SEQUENCE registro_curso_idRegCurso_SEQ START WITH 1 NOCACHE ORDER ;
-CREATE OR REPLACE TRIGGER registro_curso_idRegCurso_TRG BEFORE
-  INSERT ON registro_curso FOR EACH ROW WHEN (NEW.idRegCurso IS NULL) BEGIN :NEW.idRegCurso := registro_curso_idRegCurso_SEQ.NEXTVAL;
-END;
-/
-
 CREATE SEQUENCE reservas_idReserva_SEQ START WITH 1 NOCACHE ORDER ;
 CREATE OR REPLACE TRIGGER reservas_idReserva_TRG BEFORE
   INSERT ON reservas FOR EACH ROW WHEN (NEW.idReserva IS NULL) BEGIN :NEW.idReserva := reservas_idReserva_SEQ.NEXTVAL;
@@ -597,14 +670,6 @@ CREATE OR REPLACE TRIGGER sesion_clase_idSesion_TRG BEFORE
   INSERT ON sesion_clase FOR EACH ROW WHEN (NEW.idSesion IS NULL) BEGIN :NEW.idSesion := sesion_clase_idSesion_SEQ.NEXTVAL;
 END;
 /
-
-CREATE SEQUENCE tipo_contrato_idTipoContrato START WITH 1 NOCACHE ORDER ;
-CREATE OR REPLACE TRIGGER tipo_contrato_idTipoContrato BEFORE
-  INSERT ON tipo_contrato FOR EACH ROW WHEN (NEW.idTipoContrato IS NULL) BEGIN :NEW.idTipoContrato := tipo_contrato_idTipoContrato.NEXTVAL;
-END;
-/
-
-
 
 
 
